@@ -3,11 +3,11 @@ import * as fs from 'node:fs';
 
 self.onmessage = (event) => {
     let data = event.data;
-    let map = process_chunk( data.start, data.end, data.threads );
+    let map = process_file( data.start, data.end, data.threads );
     postMessage(map);
 };
 
-function process_chunk(start, end, threads) {
+function process_file(start, end, threads) {
     let offset = start;
     let chunks = [ start ];
 
