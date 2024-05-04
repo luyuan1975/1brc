@@ -23,10 +23,8 @@ fn main() {
 	chunk_size := (fsize + worker - 1) / worker
 	// println( '$fsize : $chunk_size' )
 
-	mut chunks := []i64{ len : worker + 1 }
-
 	mut i := 1
-	chunks[0] = 0
+	mut chunks := [ i64(0) ]
 	mut fp := os.open_file(fname, 'r')!
 	for {
 		len := chunk_size * i
@@ -34,11 +32,11 @@ fn main() {
 		fp.seek(len, .start)!
 		line := br.read_line()!
 		// println('i=$i, $line')
-		chunks[i] = len + line.len + 1
+		chunks << len + line.len + 1
 		i++
 		if i == worker { break }
 	}
-	chunks[i] = fsize
+	chunks << fsize
 	fp.close()
 	// println(chunks.str())
 	i = 0
