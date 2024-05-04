@@ -68,7 +68,7 @@ fn main() {
 
 	for city in sorted_keys {
 		re := stations[city]
-		println('${city} ${re.min} : ${re.max} : ${re.sum / re.count} : ${re.count}')
+		println('${city} : ${re.min} , ${re.max} , ${re.sum / re.count} , ${re.count}')
 	}
 	println('city number : ${sorted_keys.len}')
 	println( now() -  t_start )
