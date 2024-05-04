@@ -51,7 +51,8 @@ sub process_file([$start, $end]) {
     my $fp = open($fname, :r);
     for @chunks {
         $fp.seek($_[0]);
-        my $data = $fp.read($_[1]-$_[0]).decode;
+        # 删除最后一个换行符
+        my $data = $fp.read($_[1] - $_[0] - 1).decode;
         @lines = $data.lines;
         for @lines {
             ($city, $temp) = $_.split(';');
@@ -80,17 +81,20 @@ sub process_chunk($start, $end, $thread) {
     # say 'chunk_start = ', $start, ' : end = ', $end, ', chunk_size =', $chunk_size;
 
     my $fp = open($fname, :r);
-    repeat {
-        $chunk_end = min($end, $chunk_start + $chunk_size);
+    loop {
+        $chunk_end = $chunk_start + $chunk_size;
+        if ($chunk_end >= $end) {
+            @chunks.push( [ $chunk_start, $end ] );
+            last;
+        }
         $fp.seek($chunk_end);
         loop {
-            last if $fp.eof;
             last if $fp.read(1) eq buf8.new(10);
         }
         $chunk_end = $fp.tell;
-        @chunks.push( [ $chunk_start, $chunk_end - 1] );
+        @chunks.push( [ $chunk_start, $chunk_end ] );
         $chunk_start = $chunk_end;
-    } until $chunk_start >= $end;
+    }
     $fp.close;
     # say @chunks;
     return @chunks;
